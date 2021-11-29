@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import useAudio from "../hooks/useAudio";
 import AudioProgress from "./AudioProgress";
-import React, { useState, useRef } from "react";
+import React from "react";
 
 function Post({ image, song }) {
   const { playing, play, pause, currentTime, duration } = useAudio(
