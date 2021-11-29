@@ -1,12 +1,20 @@
 import styled from "@emotion/styled";
+import useAudio from "../hooks/useAudio";
+import AudioProgress from "./AudioProgress";
+import React, { useState, useRef } from "react";
 
 function Post({ image, song }) {
-
-  // let audio = new Audio('audio_file.mp3');
-  // audio.play();
+  const { playing, play, pause, currentTime, duration } = useAudio(
+    song.preview
+  );
 
   return (
-    <Main>
+    <Main onMouseEnter={play} onMouseLeave={pause}>
+      <AudioProgress
+        playing={playing}
+        currentTime={currentTime}
+        duration={duration}
+      />
       <UserImage src={image.url} alt="User Image" />
       <SongMain>
         <AlbumImageParent>
@@ -26,7 +34,10 @@ const Main = styled.div`
   position: relative;
   z-index: 1;
   overflow: hidden;
-  min-height: 5.6rem;
+  min-height: 5rem;
+  overflow: hidden;
+
+  cursor: pointer;
 `;
 
 const UserImage = styled.img`
@@ -36,25 +47,25 @@ const UserImage = styled.img`
 `;
 
 const SongMain = styled.div`
-height: fit-content;
+  height: fit-content;
   width: 100%;
   display: flex;
   align-items: center;
   position: absolute;
   bottom: 0px;
   z-index: 3;
-  /* padding: 0.5rem; */
 
-  background: rgba(25, 25, 25, 0.7);
-  color: white;
+  background: rgb(20, 20, 20);
+  color: rgb(222, 222, 222);
+  background: var(--white);
+  color: var(--black);
   box-sizing: border-box;
-  /* border-radius: 0 0 6px 6px; */
 `;
 
 const AlbumImageParent = styled.div`
-  flex-basis: 5.6rem;
-  height: 5.6rem;
-  width: 5.6rem;
+  flex-basis: 5rem;
+  height: 5rem;
+  width: 5rem;
   margin-right: 0.8rem;
   background: var(--black);
   /* border-radius: 0 0 0 6px; */
@@ -77,19 +88,16 @@ const Info = styled.div`
 `;
 
 const Title = styled.span`
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 600;
   text-overflow: ellipsis;
   overflow: hidden;
-  /* width: 160px;  */
-  padding: 3px 0;
   max-width: 100%;
-  height: 1.2em;
   white-space: nowrap;
 `;
 
 const Artist = styled.span`
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 500;
 `;
 

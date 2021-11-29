@@ -44,7 +44,7 @@ const P = styled.p`
   font-size: 18px;
   font-weight: 600;
   text-align: center;
-  color: var(--black);
+  color: var(--white);
 `;
 
 export default Home;

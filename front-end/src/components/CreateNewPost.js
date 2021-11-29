@@ -20,7 +20,7 @@ function CreateNewPost({ access, id }) {
 
   const classify = useCallback(async (image) => {
     try {
-      const { file, url } = image;
+      const { file } = image;
       const formData = new FormData();
       formData.append("image", file);
       let res = await axios.post("/api/automl/classify", formData);
@@ -41,7 +41,7 @@ function CreateNewPost({ access, id }) {
     if (!image) return;
 
     (async () => {
-      const { name, score } = await classify(image);
+      const { name } = await classify(image);
       setSong(await getSongWithTheme(name));
     })();
   }, [image, classify]);
@@ -91,10 +91,11 @@ const Main = styled.div`
   flex-direction: column;
   /* justify-content: center; */
   margin: 2rem auto;
-  border-radius: 6px;
-  border: 1px solid #dcdcdc;
+  /* border-radius: 6px;
+  border: 1px solid #dcdcdc; */
   background: var(--white);
   color: var(--black);
+  overflow: hidden;
 `;
 
 const Header = styled.div`
@@ -106,7 +107,7 @@ const Header = styled.div`
   width: 100%;
   display: grid;
   grid-column-gap: 5px;
-  border-bottom: 1px solid #dcdcdc;
+  /* border-bottom: 1px solid #dcdcdc; */
 
   & > *:last-of-type {
     grid-column-start: 1;
@@ -127,6 +128,7 @@ const Content = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 `;
 
 const PhotoIcon = styled.img`

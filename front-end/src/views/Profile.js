@@ -8,7 +8,7 @@ import CreateNewPost from "../components/CreateNewPost";
 function Profile(props) {
   // const audioRef = useRef(null);
 
-  const { access, refresh, name, id } = useSpotifyRedirect();
+  const { access, name, id } = useSpotifyRedirect();
 
   //     audioRef.current.play();
 
