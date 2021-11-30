@@ -15,12 +15,18 @@ app
   .use(cors())
   .use(cookieParser());
 
+app.get("/", (req, res) => {
+  res.send("hello world, this is the tune tailor backend");
+});
+
 const spotify = require("./routes/spotify");
 app.use("/api/spotify", spotify.routes);
 
 const automl = require("./routes/automl");
 app.use("/api/automl", automl.routes);
 
-app.listen(3001, () => {
-  console.log("Server listening on port 3001!");
+const port = process.env.PORT || 3001;
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}!`);
 });

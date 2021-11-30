@@ -1,4 +1,10 @@
 {
+  "name": "back-end",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "grant pitt",
   "dependencies": {
     "@google-cloud/automl": "^2.4.5",
     "cookie-parser": "^1.4.5",
@@ -8,5 +14,11 @@
     "multer": "^1.4.3",
     "request": "^2.88.2",
     "vue-filepond": "^6.0.3"
+  },
+  "engines": {
+    "node": "16.x"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
