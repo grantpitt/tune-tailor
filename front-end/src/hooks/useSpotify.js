@@ -1,30 +1,39 @@
-import axios from "axios";
+import { useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import useLocalState from "./useLocalState";
+import useSongSelection from "./useSongSelection";
+import spotifyRequest from "./spotifyRequest";
 
-function useSpotify(access) {
+function useSpotify() {
+  const history = useHistory();
+  const [access, setAccess] = useLocalState("access", null);
+  const [refresh, setRefresh] = useLocalState("refresh", null);
+  const [name, setName] = useLocalState("name", null);
+  const [id, setId] = useLocalState("id", null);
 
-  async function request(url) {
-    let headers = {
-      Authorization: "Bearer " + access,
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    };
+  const request = spotifyRequest(access, setAccess, refresh);
+  const { getSongWithTheme } = useSongSelection(request);
 
-    try {
-      let response = await axios.get(url, { headers });
-      return response.data;
-    } catch (error) {
-      const status = error?.response?.status || 404;
-      if (status === 401) {
-        // refresh Access Token
-        console.log("Refreshing access token");
-      } else {
-        console.log(error.response);
-      }
+  useEffect(() => {
+    console.log("running useSpotifyRedirect");
+
+    const queryString = window.location.search;
+    if (queryString.length > 0) {
+      const urlParams = new URLSearchParams(queryString);
+      setAccess(urlParams.get("access"));
+      setRefresh(urlParams.get("refresh"));
+      setName(urlParams.get("name"));
+      setId(urlParams.get("id"));
+
+      window.history.replaceState(null, "", "http://localhost:3000/profile");
     }
-  }
 
-  return { request }
+    if (access === null) {
+      history.push("/");
+    }
+  }, [history, setAccess, setRefresh, setId, setName, access]);
 
+  return { access, refresh, name, id, getSongWithTheme };
 }
 
 export default useSpotify;

@@ -1,24 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import useStateRef from "./useStateRef";
 
-import { Howl, Howler } from "howler";
-
 const useAudio = (url) => {
-  // const [audio] = useState(() => {
-  //   let elem = new Audio(url);
-  //   // elem.loop = true;
-  //   // elem.autoplay = "";
-  //   // elem.muted = "";
-  //   // elem.playsinline = "";
-  //   return elem;
-  // });
-
-  const [audio] = useState(
-    new Howl({
-      src: url,
-      html5: true,
-    })
-  );
+  const [audio] = useState(new Audio(url));
 
   const [playing, setPlaying, playingRef] = useStateRef(false);
 
@@ -26,85 +10,50 @@ const useAudio = (url) => {
   const [currentTime, setCurrentTime] = useState(0);
   const timeoutId = useRef(0);
 
-  const toggle = () => setPlaying(!playing);
-  const play = () => setPlaying(true);
-  const pause = () => setPlaying(false);
-
-  const tick = () => {
-    console.log("ticking");
-    setCurrentTime(audio.pos());
-    if (playingRef.current) {
-      const id = setTimeout(() => tick(), 1000);
-      timeoutId.current = id;
-    }
-  };
-
-  console.log(audio);
+  const play = () => !playing && setPlaying(true);
+  const pause = () => playing && setPlaying(false);
 
   useEffect(() => {
-    console.log("trying to play:", playing);
+
+    const tick = () => {
+      setCurrentTime(audio.currentTime);
+      if (playingRef.current) {
+        const id = setTimeout(() => tick(), 1000);
+        timeoutId.current = id;
+      }
+    };
+
     if (playing) {
       audio.play();
       tick();
     } else {
-      clearTimeout(timeoutId.current);
       audio.pause();
+      clearTimeout(timeoutId.current);
     }
-  }, [playing]);
-
-  // const onLoadedMetadata = (event) => setDuration(event.target.duration);
-
-  const onLoad = () => setDuration(audio.duration());
+  }, [playing, audio, playingRef]);
 
   useEffect(() => {
-    audio.on("load", onLoad);
-    return () => {
-      audio.off("load", onLoad);
-    };
-  }, []);
+    audio.duration && setDuration(audio.duration);
+  }, [audio.duration]);
 
-  // useEffect(() => {
-  //   audio.addEventListener("loadedmetadata", onLoadedMetadata);
-  //   return () => {
-  //     audio.removeEventListener("loadedmetadata", onLoadedMetadata);
-  //   };
-  // }, []);
-
-
-  // const onEnded = () => {
-  //   setCurrentTime(audio.duration);
-  //   setTimeout(() => {
-  //     audio.play();
-  //     audio.currentTime = 0;
-  //     setCurrentTime(0);
-  //   }, 250);
-  // };
-  const onEnd = () => {
-    setCurrentTime(audio.duration());
+  const onEnd = useCallback(() => {
+    setCurrentTime(audio.duration);
     setTimeout(() => {
       audio.play();
-      audio.pos(0);
+      audio.currentTime = 0;
       setCurrentTime(0);
     }, 250);
-  };
+  }, [audio]);
 
   useEffect(() => {
-    audio.on("end", onEnd);
+    audio.addEventListener("ended", onEnd);
     return () => {
-      audio.off("end", onEnd);
+      audio.removeEventListener("ended", onEnd);
     };
-  }, []);
-
-  // useEffect(() => {
-  //   audio.addEventListener("ended", onEnded);
-  //   return () => {
-  //     audio.removeEventListener("ended", onEnded);
-  //   };
-  // }, []);
+  }, [audio, onEnd]);
 
   return {
     playing,
-    toggle,
     play,
     pause,
     currentTime,

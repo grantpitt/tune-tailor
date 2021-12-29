@@ -26,7 +26,7 @@ const AuthBtn = styled.div`
   font-weight: 600;
   font-size: 24px;
   width: fit-content;
-  border-radius: 14px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: space-between;

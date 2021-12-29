@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import heic2any from "heic2any";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
+import imageCompression from "browser-image-compression";
 
 function Uploader({ setImage, setIsUploading }) {
   async function fileChanged(event) {
@@ -13,9 +14,15 @@ function Uploader({ setImage, setIsUploading }) {
       file = await heic2any({
         blob: file,
         toType: "image/png",
-        quality: 0.9,
+        quality: 0.25,
       });
       console.log("converted to png");
+    } else {
+      console.log("compressing");
+      file = await imageCompression(file, {
+        maxSizeMB: 0.8,
+      });
+      console.log("done compressing");
     }
     let url = URL.createObjectURL(file);
     setIsUploading(false);
@@ -39,10 +46,13 @@ const Label = styled.label`
   cursor: pointer;
   border-radius: 6px;
   font-weight: 600;
-  margin: 0 0 4rem 0;
+  margin: 1rem 0 4rem 0;
 
   color: var(--white);
   background: var(--black);
+  &:hover {
+    background: var(--black-hover);
+  }
 `;
 
 const Input = styled.input`

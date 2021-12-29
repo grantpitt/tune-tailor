@@ -1,25 +1,20 @@
 import React from "react";
 import styled from "@emotion/styled";
 import Header from "../components/Header";
-import useSpotifyRedirect from "../hooks/useSpotifyRedirect";
-
+import useSpotify from "../hooks/useSpotify";
 import CreateNewPost from "../components/CreateNewPost";
 
-function Profile(props) {
-  // const audioRef = useRef(null);
+function Profile() {
 
-  const { access, name, id } = useSpotifyRedirect();
+  const spotify = useSpotify();
 
-  //     audioRef.current.play();
-
-  //   // let audio = new Audio('audio_file.mp3');
-  //   // audio.play();
+  console.log("rendering profile!");
 
   return (
     <Main>
-      <Header username={name}/>
+      <Header username={spotify.name}/>
       <Content>
-        {access !== null ? (
+        {spotify.access !== null ? (
           <>
             <PostContainer>
               {/* {audio && (
@@ -29,7 +24,7 @@ function Profile(props) {
                 </audio>
               )} */}
             </PostContainer>
-            <CreateNewPost access={access} id={id} />
+            <CreateNewPost spotify={spotify} />
           </>
         ) : (
           <SetupMessage>Setting things up...</SetupMessage>
@@ -58,7 +53,7 @@ const Content = styled.div`
   align-items: center;
   flex-direction: column;
   box-sizing: border-box;
-  padding: calc(50px + 2rem) 2rem 2rem;
+  padding: calc(50px + 2rem) 2rem 2rem; 
 `;
 
 const SetupMessage = styled.h3`

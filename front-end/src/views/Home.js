@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 function Home() {
   return (
     <Main>
-      <H1>Welcome to Tune Tailor</H1>
+      <H1>Welcome to <br/> Tune Tailor</H1>
       <P>
         Find a tune perfectly tailored to today's outfit.
       </P>
@@ -21,14 +21,12 @@ const Main = styled.main`
   flex-direction: column;
   height: 100vh;
   margin: 0;
-  color: #2c3e50;
   background: var(--primary)
 `;
 
 const H1 = styled.h1`
   font-weight: 700;
   width: fit-content;
-  max-width: 754px;
   text-align: center;
   font-size: 104px;
   line-height: 104px;
@@ -39,9 +37,8 @@ const H1 = styled.h1`
 `;
 
 const P = styled.p`
-  max-width: 425px;
   padding-bottom: 12px;
-  font-size: 18px;
+  font-size: 1.25rem;
   font-weight: 600;
   text-align: center;
   color: var(--white);

@@ -1,4 +1,4 @@
-import useSpotifyRedirect from "../hooks/useSpotifyRedirect";
+import useSpotify from "../hooks/useSpotify";
 import Header from "../components/Header";
 import styled from "@emotion/styled";
 import Post from "../components/Post";
@@ -6,11 +6,17 @@ import Post from "../components/Post";
 import React, { useState, useEffect } from "react";
 
 import db from "../hooks/db";
+import FeedModal from "../components/FeedModal";
+import useDisableBodyScroll from "../hooks/useDisableBodyScroll";
 
 function Feed() {
-  const { name } = useSpotifyRedirect();
+  const { name } = useSpotify();
 
   const [posts, setPosts] = useState(null);
+
+  const [showModal, setShowModal] = useState(true);
+
+  useDisableBodyScroll(showModal);
 
   useEffect(() => {
     if (posts !== null) return;
@@ -21,21 +27,26 @@ function Feed() {
   }, [posts, setPosts]);
 
   return (
+    <>
+    <FeedModal show={showModal} setShow={setShowModal}/>
     <Main>
       <Header username={name} />
       <Content>
         <Masonry>
           {posts &&
-            posts.map((post) => (
-              <PostContainer>
+            posts.map((post) => {
+              return (
+              <PostContainer key={post.id}>
                 <PostSpacing>
                   <Post song={post.song} image={{ url: post.user.url }} />
                 </PostSpacing>
-              </PostContainer>
-            ))}
+              </PostContainer>)
+            })}
         </Masonry>
+
       </Content>
     </Main>
+    </>
   );
 }
 
@@ -53,16 +64,16 @@ const Main = styled.main`
 const Content = styled.div`
   display: flex;
   width: 100%;
-  /* padding: 2rem 0; */
   align-items: center;
   flex-direction: column;
   box-sizing: border-box;
-  padding: calc(50px + 2rem) 2rem 2rem;
+  padding: calc(50px + 1rem) 2rem 2rem;
 `;
 
 const Masonry = styled.div`
   width: 100%;
-  column-gap: 1em;
+  column-gap: 1rem;
+
   /* Masonry on large screens */
   @media only screen and (min-width: 1024px) {
     column-count: 3;
@@ -86,20 +97,18 @@ const Masonry = styled.div`
 `;
 
 const PostContainer = styled.div`
-  /* width: min(80%, 500px); */
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* margin: 0 auto; */
   width: 100%;
   margin: 0 0 1rem;
   display: inline-block;
-  box-sizing: inherit;
 `;
 
 const PostSpacing = styled.div`
-  margin: 1rem;
-  box-sizing: inherit;
+  padding: 1rem;
+  max-width: 450px;
+  margin: auto;
 `;
 
 export default Feed;

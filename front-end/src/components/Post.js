@@ -43,7 +43,6 @@ const Main = styled.div`
 const UserImage = styled.img`
   width: 100%;
   display: block;
-  /* border-radius: 0 0 6px 6px; */
 `;
 
 const SongMain = styled.div`
@@ -63,19 +62,16 @@ const SongMain = styled.div`
 `;
 
 const AlbumImageParent = styled.div`
-  flex-basis: 5rem;
-  height: 5rem;
-  width: 5rem;
-  margin-right: 0.8rem;
+  width: 20%;
+  aspect-ratio: 1 / 1;
+
   background: var(--black);
-  /* border-radius: 0 0 0 6px; */
 `;
 
 const AlbumImage = styled.img`
   width: 100%;
   height: 100%;
   display: block;
-  /* border-radius: 0 0 0 6px; */
   flex: 0 0 auto;
 `;
 
@@ -83,12 +79,14 @@ const Info = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  max-width: calc(100% - 6.4rem);
+  max-width: 80%;
+  padding: 0 0.8rem;
+  box-sizing: border-box;
   flex: 1 2 auto;
 `;
 
 const Title = styled.span`
-  font-size: 1.5rem;
+  font-size: 1.45em;
   font-weight: 600;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -97,7 +95,7 @@ const Title = styled.span`
 `;
 
 const Artist = styled.span`
-  font-size: 0.8rem;
+  font-size: 1em;
   font-weight: 500;
 `;
 

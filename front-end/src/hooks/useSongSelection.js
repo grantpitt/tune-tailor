@@ -1,12 +1,13 @@
 import themeGenres from "../assets/theme-genres.json";
-import useSpotify from "./useSpotify";
+import spotifyRequest from "./spotifyRequest";
 import _ from "lodash";
 
-function useSongSelection(access) {
-  const spotify = useSpotify(access);
+function useSongSelection(request) {
+
+  console.log("rerendering use song selection!");
 
   async function getSongs() {
-    const response = await spotify.request(
+    const response = await request(
       "https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=25"
     );
     const songs = response.items;
@@ -32,7 +33,7 @@ function useSongSelection(access) {
     const params = new URLSearchParams({
       ids: [...artistIds],
     });
-    const response = await spotify.request(
+    const response = await request(
       `https://api.spotify.com/v1/artists?${params.toString()}`
     );
     const artistGenres = {};

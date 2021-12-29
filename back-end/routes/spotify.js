@@ -98,6 +98,7 @@ router.get("/callback", (req, res) => {
 
 router.get("/refresh-token", (req, res) => {
   // requesting access token from refresh token
+  console.log("REQUEST:", req);
   var refresh_token = req.query.refresh_token;
   var authOptions = {
     url: "https://accounts.spotify.com/api/token",
@@ -119,6 +120,9 @@ router.get("/refresh-token", (req, res) => {
       res.send({
         access_token: access_token,
       });
+    } else {
+      // console.error(response);
+      // console.error("error:", error);
     }
   });
 });

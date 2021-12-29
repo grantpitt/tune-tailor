@@ -9,8 +9,10 @@ const storage = getStorage(firebase);
 const db = {
   async get() {
     const snapshot = await getDocs(collection(firestore, "posts"));
-    const posts = snapshot.docs.map((post) => post.data());
-    console.log(posts);
+    const posts = snapshot.docs.map((post) => ({
+      ...post.data(),
+      id: post.id,
+    }));
     return posts;
   },
 

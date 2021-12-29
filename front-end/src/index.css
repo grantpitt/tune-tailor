@@ -2,40 +2,12 @@
 
 
 :root {
-  /* --primary: #ff52bd;
-  --primary: #a87795;
-  --primary: #f5cfe6;
-  --secondary: #ffe75c;
-  --primary: #292f64;
-  --secondary: #ff6e2a; */
-  
-  /* --primary: #273b61;
-  --primary: #405983; */
-
-  --primary: #4F6B98;
-  --secondary: #a3fa6a;
-
-  /* --secondary: #ffe75c; */
-  /* --secondary: #ff6e2a; */
-
-
-
-
-  /* --primary: #283c30;
-  --secondary: #f87e2c;
-  --primary: #e2ee3b;
-  --secondary: #e714d6; */
-
-
-
-
-  /* --primary: #ffdaf9;
-  --secondary: #ffdf2a; */
-
-
   --black: rgb(25, 25, 25);
   --black-hover: rgb(30, 30, 30);
   --white: rgb(245, 245, 245);
+
+  --primary: #2c3f5a;
+  --secondary: HotPink;
 }
 
 ::selection {

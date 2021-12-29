@@ -1,22 +1,26 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useHistory } from "react-router-dom";
 import styled from "@emotion/styled";
 import photoIcon from "../assets/photo-icon.png";
 import Uploader from "./Uploader";
-import useSongSelection from "../hooks/useSongSelection";
 import Post from "./Post";
 import LoadingAnimation from "./LoadingAnimation";
 import axios from "axios";
+import PostingModal from "./PostingModal";
+import useDisableBodyScroll from "../hooks/useDisableBodyScroll";
 
 import db from "../hooks/db";
 
-function CreateNewPost({ access, id }) {
+function CreateNewPost({ spotify }) {
   console.log("in create new post");
 
   const [image, setImage] = useState(null);
   const [song, setSong] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isPosting, setIsPosting] = useState(false);
+  const history = useHistory();
 
-  const { getSongWithTheme } = useSongSelection(access);
+  useDisableBodyScroll(isPosting);
 
   const classify = useCallback(async (image) => {
     try {
@@ -38,88 +42,104 @@ function CreateNewPost({ access, id }) {
   }, []);
 
   useEffect(() => {
-    if (!image) return;
+    if (!image || song) return;
 
     (async () => {
       const { name } = await classify(image);
-      setSong(await getSongWithTheme(name));
+      setSong(await spotify.getSongWithTheme(name));
     })();
-  }, [image, classify]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [image]);
 
-  function post() {
-    console.log("posting");
+ const post = async () => {
+    setIsPosting(true);
     console.log(image);
-    db.post(image.file, {
+    await db.post(image.file, {
       song,
       user: {
-        id,
+        id: spotify.id,
         image: image.id,
-      }
+      },
     });
+    setIsPosting(false);
+    history.push("/feed");
+  }
+
+  const clear = () => {
+    setImage(null);
+    setSong(null);
+    setIsUploading(false);
+    setIsPosting(false);
   }
 
   return (
-    <Main>
-      <Header>
-        <Content>Create new post</Content>
-        {image && song && (
-          <Content>
-            <PostButton onClick={post}>Share</PostButton>
-          </Content>
-        )}
-      </Header>
-      <Content>
-        {isUploading && <LoadingAnimation />}
-        {image && song && <Post image={image} song={song} />}
-        {!(isUploading || image) && (
-          <>
-            <div>
-              <PhotoIcon src={photoIcon} />
-            </div>
-            <Uploader setImage={setImage} setIsUploading={setIsUploading} />
-          </>
-        )}
-      </Content>
-    </Main>
+    <>
+      <PostingModal show={isPosting} />
+      <Main uploaded={image && song ? 1 : 0}>
+        <Header>
+          <div style={{ justifySelf: "left" }}>
+            {image && song && (
+              <BackBtn onClick={clear}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  />
+                </svg>
+              </BackBtn>
+            )}
+          </div>
+          <div style={{ justifySelf: "center" }}>Create new post</div>
+          <div style={{ justifySelf: "right" }}>
+            {image && song && <PostBtn onClick={post}>Share</PostBtn>}
+          </div>
+        </Header>
+        <Content>
+          {isUploading && <LoadingAnimation />}
+          {image && song && <Post image={image} song={song} />}
+          {!(isUploading || image) && (
+            <>
+              <div>
+                <PhotoIcon src={photoIcon} />
+              </div>
+              <Uploader setImage={setImage} setIsUploading={setIsUploading} />
+            </>
+          )}
+        </Content>
+      </Main>
+    </>
   );
 }
 
 const Main = styled.div`
-  width: min(80%, 500px);
-  min-height: min(80vw, 500px);
+  width: 500px;
+  max-width: 100%;
+  min-height: ${(props) => (props.uploaded ? "none" : "min(80vw, 500px)")};
   display: flex;
   flex-direction: column;
-  /* justify-content: center; */
   margin: 2rem auto;
-  /* border-radius: 6px;
-  border: 1px solid #dcdcdc; */
   background: var(--white);
   color: var(--black);
   overflow: hidden;
 `;
 
 const Header = styled.div`
-  padding: 0.5rem;
+  padding: 0.5rem 0.75rem;
   font-weight: 600;
-  padding: 0.5rem;
   font-size: 1.2rem;
   box-sizing: border-box;
   width: 100%;
   display: grid;
+  grid-template-columns: 1fr auto 1fr;
   grid-column-gap: 5px;
-  /* border-bottom: 1px solid #dcdcdc; */
-
-  & > *:last-of-type {
-    grid-column-start: 1;
-    grid-row-start: 1;
-    justify-self: right;
-  }
-
-  & > *:first-of-type {
-    grid-column-start: 1;
-    grid-row-start: 1;
-    justify-self: center;
-  }
+  align-items: center;
 `;
 
 const Content = styled.div`
@@ -129,27 +149,25 @@ const Content = styled.div`
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  position: relative;
 `;
 
 const PhotoIcon = styled.img`
   height: 6rem;
 `;
 
-const PostButton = styled.div`
+const PostBtn = styled.div`
   cursor: pointer;
   height: fit-content;
-  /* padding: 0.6rem 1rem; */
-
-  font-weight: 600;
   font-size: 1rem;
-  /* padding: 0.5rem 1rem; */
-
-  cursor: pointer;
-  border-radius: 6px;
   font-weight: 600;
-
   color: var(--secondary);
-  /* background: var(--black); */
+`;
+
+const BackBtn = styled.div`
+  cursor: pointer;
+  width: 1.4rem;
+  height: 1.3rem;
 `;
 
 export default CreateNewPost;
