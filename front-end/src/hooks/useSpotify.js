@@ -1,17 +1,18 @@
 import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import useLocalRef from "./useLocalRef";
 import useLocalState from "./useLocalState";
 import useSongSelection from "./useSongSelection";
-import spotifyRequest from "./spotifyRequest";
+import useSpotifyRequest from "./useSpotifyRequest";
 
 function useSpotify() {
   const history = useHistory();
-  const [access, setAccess] = useLocalState("access", null);
-  const [refresh, setRefresh] = useLocalState("refresh", null);
+  const [access, setAccess] = useLocalRef("access", null);
+  const [refresh, setRefresh] = useLocalRef("refresh", null);
   const [name, setName] = useLocalState("name", null);
-  const [id, setId] = useLocalState("id", null);
+  const [id, setId] = useLocalRef("id", null);
 
-  const request = spotifyRequest(access, setAccess, refresh);
+  const request = useSpotifyRequest(access, setAccess, refresh);
   const { getSongWithTheme } = useSongSelection(request);
 
   useEffect(() => {
@@ -28,12 +29,18 @@ function useSpotify() {
       window.history.replaceState(null, "", "http://localhost:3000/profile");
     }
 
-    if (access === null) {
+    if (access.current === null) {
       history.push("/");
     }
   }, [history, setAccess, setRefresh, setId, setName, access]);
 
-  return { access, refresh, name, id, getSongWithTheme };
+  return {
+    access: access.current,
+    refresh: refresh.current,
+    name: name,
+    id: id.current,
+    getSongWithTheme,
+  };
 }
 
 export default useSpotify;

@@ -30,7 +30,7 @@ function Feed() {
     <>
     <FeedModal show={showModal} setShow={setShowModal}/>
     <Main>
-      <Header username={name} />
+      <Header username={name.current} />
       <Content>
         <Masonry>
           {posts &&
@@ -75,12 +75,12 @@ const Masonry = styled.div`
   column-gap: 1rem;
 
   /* Masonry on large screens */
-  @media only screen and (min-width: 1024px) {
+  @media only screen and (min-width: 1080px) {
     column-count: 3;
   }
 
   /* Masonry on medium-sized screens */
-  @media only screen and (max-width: 1023px) and (min-width: 768px) {
+  @media only screen and (max-width: 1079px) and (min-width: 768px) {
     column-count: 2;
   }
 

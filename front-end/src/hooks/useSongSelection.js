@@ -1,16 +1,29 @@
 import themeGenres from "../assets/theme-genres.json";
-import spotifyRequest from "./spotifyRequest";
 import _ from "lodash";
 
 function useSongSelection(request) {
 
   console.log("rerendering use song selection!");
 
-  async function getSongs() {
-    const response = await request(
-      "https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=25"
-    );
-    const songs = response.items;
+  async function getPlaylistTracks() {
+    const response = await request("https://api.spotify.com/v1/me/playlists?limit=3");
+    const playlistUrls = response.items.map(playlist => playlist.tracks.href);
+    const tracks = [];
+    await Promise.all(playlistUrls.map(async (url) => {
+      const res = await request(url);
+      const playlistTracks = res.items.map(item => item.track);
+      tracks.push(...playlistTracks);
+    }))
+    return tracks;
+  }
+
+  async function getTopTracks() {
+    const response = await request("https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=25");
+    const tracks = response.items;
+    return tracks;
+  }
+
+  async function compileSongs(songs) {
     const artistGenres = await getArtistGenres(songs);
     return songs.map((song) => {
       const artist = song.artists[0];
@@ -45,7 +58,11 @@ function useSongSelection(request) {
 
   async function getSongWithTheme(theme) {
     console.log("getting song with theme: ", theme);
-    const songs = await getSongs();
+
+    const playlistTracks = await getPlaylistTracks();
+    const topTracks = await getTopTracks();
+    const tracks = [...topTracks, ...playlistTracks];
+    const songs = await compileSongs(tracks);
     const genres = themeGenres[theme];
 
     // console.log(songs);

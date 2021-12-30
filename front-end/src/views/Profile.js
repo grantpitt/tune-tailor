@@ -59,6 +59,7 @@ const Content = styled.div`
 const SetupMessage = styled.h3`
   font-size: 1rem;
   margin: 1rem;
+  color: var(--white);
 `;
 
 const PostContainer = styled.div`

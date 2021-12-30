@@ -1,10 +1,10 @@
 import axios from "axios";
 
-function spotifyRequest(access, setAccess, refresh) {
+function useSpotifyRequest(access, setAccess, refresh) {
 
   async function request(url) {
     let headers = {
-      Authorization: "Bearer " + access,
+      Authorization: "Bearer " + access.current,
       Accept: "application/json",
       "Content-Type": "application/json",
     };
@@ -17,7 +17,7 @@ function spotifyRequest(access, setAccess, refresh) {
       if (status === 401) {
         // refresh Access Token
         console.log("Refreshing access token");
-        await refreshAccess(() => refreshAccess(url));
+        return await refreshAccess(() => request(url));
       } else {
         console.log(error.response);
       }
@@ -26,10 +26,10 @@ function spotifyRequest(access, setAccess, refresh) {
 
   async function refreshAccess(callback) {
     try {
-      const res = await axios.get("/api/spotify/refresh-token", { params: { refresh_token: refresh }})
+      const res = await axios.get("/api/spotify/refresh-token", { params: { refresh_token: refresh.current }})
       const updatedAccess = res.data.access_token;
       setAccess(updatedAccess);
-      callback();
+      return await callback();
     } catch (error) {
       console.error(error);
     } 
@@ -39,4 +39,4 @@ function spotifyRequest(access, setAccess, refresh) {
 
 }
 
-export default spotifyRequest;
+export default useSpotifyRequest;
