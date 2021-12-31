@@ -3,7 +3,7 @@ import GreenSpotifyLogo from "../assets/black-spotify-logo.png";
 
 function Login() {
   return (
-    <Link href="http://localhost:3001/api/spotify/auth">
+    <Link href="https://server.tunetailor.app/api/spotify/auth">
       <AuthBtn>
         <SpotifyLogo src={GreenSpotifyLogo} alt="Spotify Logo" />
         <div>Login with Spotify</div>

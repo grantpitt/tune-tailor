@@ -24,7 +24,7 @@ function useSpotify() {
       setName(urlParams.get("name"));
       setId(urlParams.get("id"));
 
-      window.history.replaceState(null, "", "http://localhost:3000/profile");
+      window.history.replaceState(null, "", "https://tunetailor.app/profile");
     }
 
     if (access.current === null) {

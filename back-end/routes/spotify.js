@@ -10,7 +10,7 @@ dotenv.config();
 let clientId = process.env.CLIENT_ID;
 let clientSecret = process.env.CLIENT_SECRET;
 const FRONT_PORT = process.env.FRONT_PORT;
-let redirectUri = "http://localhost:3001/api/spotify/callback";
+let redirectUri = "https://server.tunetailor.app/api/spotify/callback";
 var stateKey = "spotify_auth_state";
 
 router.get("/auth", (req, res) => {
@@ -41,7 +41,7 @@ router.get("/callback", (req, res) => {
     let params = new URLSearchParams({
       error: "state_mismatch",
     });
-    res.redirect(`http://localhost:${FRONT_PORT}/#` + params.toString());
+    res.redirect(`https://tunetailor.app/#` + params.toString());
   } else {
     res.clearCookie(stateKey);
     var authOptions = {
@@ -81,14 +81,14 @@ router.get("/callback", (req, res) => {
             id,
           });
           res.redirect(
-            `http://localhost:${FRONT_PORT}/profile?` + params.toString()
+            `https://tunetailor.app/profile?` + params.toString()
           );
         });
       } else {
         let params = new URLSearchParams({
           error: "invalid_token",
         });
-        res.redirect(`http://localhost:${FRONT_PORT}/#` + params.toString());
+        res.redirect(`https://tunetailor.app/#` + params.toString());
       }
     });
   }
