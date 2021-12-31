@@ -15,8 +15,6 @@ app
   .use(cors())
   .use(cookieParser());
 
-app.options('*', cors());
-
 app.get("/", (req, res) => {
   res.send("hello world, this is the tune tailor backend");
 });
