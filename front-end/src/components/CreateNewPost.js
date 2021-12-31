@@ -25,7 +25,7 @@ function CreateNewPost({ spotify }) {
       const { file } = image;
       const formData = new FormData();
       formData.append("image", file);
-      let res = await axios.post("/api/automl/classify", formData);
+      let res = await axios.post(`${process.env.REACT_APP_SERVER}/api/automl/classify`, formData);
       let classData = res.data[0];
 
       let name = classData.displayName;
