@@ -24,7 +24,7 @@ function useSpotifyRequest(access, setAccess, refresh) {
 
   async function refreshAccess(callback) {
     try {
-      const res = await axios.get("/api/spotify/refresh-token", { params: { refresh_token: refresh.current }})
+      const res = await axios.get(`${process.env.REACT_APP_SERVER}/api/spotify/refresh-token`, { params: { refresh_token: refresh.current }})
       const updatedAccess = res.data.access_token;
       setAccess(updatedAccess);
       return await callback();
