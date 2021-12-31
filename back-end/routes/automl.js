@@ -46,15 +46,14 @@ async function automl(req, res) {
 
   const [response] = await client.predict(request);
 
-  console.log(response);
   res.send(response.payload);
 
-  for (const annotationPayload of response.payload) {
-    console.log(`Predicted class name: ${annotationPayload.displayName}`);
-    console.log(
-      `Predicted class score: ${annotationPayload.classification.score}`
-    );
-  }
+  // for (const annotationPayload of response.payload) {
+  //   console.log(`Predicted class name: ${annotationPayload.displayName}`);
+  //   console.log(
+  //     `Predicted class score: ${annotationPayload.classification.score}`
+  //   );
+  // }
 }
 
 module.exports = {

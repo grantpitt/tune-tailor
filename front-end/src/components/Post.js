@@ -2,25 +2,32 @@ import styled from "@emotion/styled";
 import useAudio from "../hooks/useAudio";
 import AudioProgress from "./AudioProgress";
 import React from "react";
+import { formatDistance } from "date-fns";
 
-function Post({ image, song }) {
+function Post({ data }) {
+  const { createdAt, song, user } = data;
   const { playing, play, pause, currentTime, duration } = useAudio(
     song.preview
   );
 
+  const formatTimestamp = (timestamp) => {
+    if (timestamp === null) return "";
+    return formatDistance(timestamp.toDate(), new Date(), { addSuffix: true });
+  };
+
   return (
-    <Main onMouseEnter={play} onMouseLeave={pause}>
+    <Main  onMouseEnter={play} onMouseLeave={pause}>
       <AudioProgress
         playing={playing}
         currentTime={currentTime}
         duration={duration}
       />
-      <UserImage src={image.url} alt="User Image" />
+      <UserImage src={user.url} alt="User Image" />
       <SongMain>
-          <AlbumImage src={song.image} alt="Album Image" />
+        <AlbumImage src={song.image} alt="Album Image" />
         <Info>
-        <Username>grantpitt</Username>
-        <UploadDate>4 hours ago</UploadDate>
+          <Username>{user.name}</Username>
+          <UploadDate>{formatTimestamp(createdAt)}</UploadDate>
           <Title>{song.name}</Title>
           <Artist>{song.artist}</Artist>
         </Info>
@@ -68,10 +75,10 @@ const AlbumImage = styled.img`
 
 const Info = styled.div`
   display: grid;
-  padding: 0.6rem 0.8rem;
+  padding: 0.2rem 0.8rem 0.6rem;
   flex-grow: 1;
   box-sizing: border-box;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: auto auto;
   column-gap: 1rem;
 `;
 

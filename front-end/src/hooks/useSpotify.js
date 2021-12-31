@@ -16,8 +16,6 @@ function useSpotify() {
   const { getSongWithTheme } = useSongSelection(request);
 
   useEffect(() => {
-    console.log("running useSpotifyRedirect");
-
     const queryString = window.location.search;
     if (queryString.length > 0) {
       const urlParams = new URLSearchParams(queryString);

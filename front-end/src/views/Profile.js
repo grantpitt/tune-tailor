@@ -7,9 +7,7 @@ import CreateNewPost from "../components/CreateNewPost";
 function Profile() {
 
   const spotify = useSpotify();
-
-  console.log("rendering profile!");
-
+  
   return (
     <Main>
       <Header username={spotify.name}/>

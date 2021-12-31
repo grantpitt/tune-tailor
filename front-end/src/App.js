@@ -9,15 +9,9 @@ function App() {
   return (
     <Router>
       <Main>
-        {/* <div className="container">
-        <Navbar />
-        <br/> */}
         <Route path="/" exact component={Home} />
         <Route path="/profile" component={Profile} />
         <Route path="/feed" component={Feed} />
-
-        {/* <Route path="/edit/:id" component={EditExercise} /> 
-        </ div>*/}
       </Main>
     </Router>
   );

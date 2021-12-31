@@ -15,8 +15,6 @@ function useSpotifyRequest(access, setAccess, refresh) {
     } catch (error) {
       const status = error?.response?.status || 404;
       if (status === 401) {
-        // refresh Access Token
-        console.log("Refreshing access token");
         return await refreshAccess(() => request(url));
       } else {
         console.log(error.response);

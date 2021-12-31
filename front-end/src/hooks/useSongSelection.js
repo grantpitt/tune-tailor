@@ -3,22 +3,26 @@ import _ from "lodash";
 
 function useSongSelection(request) {
 
-  console.log("rerendering use song selection!");
-
   async function getPlaylistTracks() {
-    const response = await request("https://api.spotify.com/v1/me/playlists?limit=3");
-    const playlistUrls = response.items.map(playlist => playlist.tracks.href);
+    const response = await request(
+      "https://api.spotify.com/v1/me/playlists?limit=5"
+    );
+    const playlistUrls = response.items.map((playlist) => playlist.tracks.href);
     const tracks = [];
-    await Promise.all(playlistUrls.map(async (url) => {
-      const res = await request(url);
-      const playlistTracks = res.items.map(item => item.track);
-      tracks.push(...playlistTracks);
-    }))
+    await Promise.all(
+      playlistUrls.map(async (url) => {
+        const res = await request(url + "?limit=50");
+        const playlistTracks = res.items.map((item) => item.track);
+        tracks.push(...playlistTracks);
+      })
+    );
     return tracks;
   }
 
   async function getTopTracks() {
-    const response = await request("https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=25");
+    const response = await request(
+      "https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=50"
+    );
     const tracks = response.items;
     return tracks;
   }
@@ -42,42 +46,51 @@ function useSongSelection(request) {
   }
 
   async function getArtistGenres(songs) {
-    const artistIds = new Set(songs.map((song) => song.artists[0].id));
-    const params = new URLSearchParams({
-      ids: [...artistIds],
-    });
-    const response = await request(
-      `https://api.spotify.com/v1/artists?${params.toString()}`
-    );
+    const artistIds = _.uniq(songs.map((song) => song.artists[0].id));
+
+    const size = artistIds.length;
+    const chunkSize = 50; // limit for spotify API endpoint
+
+    const partitionIndices = [];
+    for (let i = 0; i < size; i += chunkSize) {
+      partitionIndices.push(i);
+    }
+
     const artistGenres = {};
-    response.artists.forEach((artist) => {
-      artistGenres[artist.id] = artist.genres;
-    });
+    await Promise.all(
+      partitionIndices.map(async (i) => {
+        const params = new URLSearchParams({
+          ids: artistIds.slice(i, i + chunkSize),
+        });
+        const response = await request(
+          `https://api.spotify.com/v1/artists?${params.toString()}`
+        );
+        response.artists.forEach((artist) => {
+          artistGenres[artist.id] = artist.genres;
+        });
+      })
+    );
+
     return artistGenres;
   }
 
   async function getSongWithTheme(theme) {
-    console.log("getting song with theme: ", theme);
-
-    const playlistTracks = await getPlaylistTracks();
-    const topTracks = await getTopTracks();
-    const tracks = [...topTracks, ...playlistTracks];
-    const songs = await compileSongs(tracks);
     const genres = themeGenres[theme];
+    const tracks = (
+      await Promise.all([getPlaylistTracks(), getTopTracks()])
+    ).flat();
 
-    // console.log(songs);
-    // let i = 0;
-    // for (let song of songs) {
-    //   console.log(++i, "=> ", _.intersection(song.genres, genres));
-    // }
-    // console.log(_.intersection(songs[0].genres, genres));
-    // console.log(theme);
-    // console.log(genres);
+    const songs = await compileSongs(tracks);
 
-    return _.maxBy(
+    // multiply by -1 to sort decending
+    const songsByIntersection = _.sortBy(
       _.shuffle(songs),
-      (song) => _.intersection(song.genres, genres).length
+      (song) => _.intersection(song.genres, genres).length * -1
     );
+    const top15 = songsByIntersection.slice(0, 15);
+    const songRecomendation = _.sample(top15);
+
+    return songRecomendation;
   }
 
   return { getSongWithTheme };

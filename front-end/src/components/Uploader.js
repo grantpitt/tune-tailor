@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import heic2any from "heic2any";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import imageCompression from "browser-image-compression";
 
 function Uploader({ setImage, setIsUploading }) {
   async function fileChanged(event) {
@@ -10,22 +9,13 @@ function Uploader({ setImage, setIsUploading }) {
     setIsUploading(true);
     let file = event.target.files[0];
     if (file.type === "image/heic") {
-      console.log("converting to png");
       file = await heic2any({
         blob: file,
         toType: "image/png",
-        quality: 0.25,
+        quality: 0.2,
       });
-      console.log("converted to png");
-    } else {
-      console.log("compressing");
-      file = await imageCompression(file, {
-        maxSizeMB: 0.8,
-      });
-      console.log("done compressing");
     }
     let url = URL.createObjectURL(file);
-    setIsUploading(false);
     setImage({ file, url, id: uuidv4() });
     event.preventDefault();
   }

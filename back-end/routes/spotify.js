@@ -72,8 +72,6 @@ router.get("/callback", (req, res) => {
 
         // use the access token to access the Spotify Web API
         request.get(options, (error, response, body) => {
-          console.log(body);
-
           let id = body.id;
           let name = body.display_name;
           let params = new URLSearchParams({
@@ -98,7 +96,6 @@ router.get("/callback", (req, res) => {
 
 router.get("/refresh-token", (req, res) => {
   // requesting access token from refresh token
-  console.log("REQUEST:", req);
   var refresh_token = req.query.refresh_token;
   var authOptions = {
     url: "https://accounts.spotify.com/api/token",
@@ -121,8 +118,8 @@ router.get("/refresh-token", (req, res) => {
         access_token: access_token,
       });
     } else {
-      // console.error(response);
-      // console.error("error:", error);
+      console.error(response);
+      console.error("error:", error);
     }
   });
 });

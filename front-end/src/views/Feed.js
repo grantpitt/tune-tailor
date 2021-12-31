@@ -10,12 +10,10 @@ import FeedModal from "../components/FeedModal";
 import useDisableBodyScroll from "../hooks/useDisableBodyScroll";
 
 function Feed() {
-  const { name } = useSpotify();
 
   const [posts, setPosts] = useState(null);
-
   const [showModal, setShowModal] = useState(true);
-
+  const { name } = useSpotify();
   useDisableBodyScroll(showModal);
 
   useEffect(() => {
@@ -30,7 +28,7 @@ function Feed() {
     <>
     <FeedModal show={showModal} setShow={setShowModal}/>
     <Main>
-      <Header username={name.current} />
+      <Header username={name} />
       <Content>
         <Masonry>
           {posts &&
@@ -38,7 +36,7 @@ function Feed() {
               return (
               <PostContainer key={post.id}>
                 <PostSpacing>
-                  <Post song={post.song} image={{ url: post.user.url }} />
+                  <Post data={post} />
                 </PostSpacing>
               </PostContainer>)
             })}

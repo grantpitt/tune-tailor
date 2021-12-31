@@ -8,11 +8,9 @@ import LoadingAnimation from "./LoadingAnimation";
 import axios from "axios";
 import PostingModal from "./PostingModal";
 import useDisableBodyScroll from "../hooks/useDisableBodyScroll";
-
 import db from "../hooks/db";
 
 function CreateNewPost({ spotify }) {
-  console.log("in create new post");
 
   const [image, setImage] = useState(null);
   const [song, setSong] = useState(null);
@@ -47,17 +45,18 @@ function CreateNewPost({ spotify }) {
     (async () => {
       const { name } = await classify(image);
       setSong(await spotify.getSongWithTheme(name));
+      setIsUploading(false);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [image]);
 
  const post = async () => {
     setIsPosting(true);
-    console.log(image);
     await db.post(image.file, {
       song,
       user: {
         id: spotify.id,
+        name: spotify.name,
         image: image.id,
       },
     });
@@ -71,6 +70,16 @@ function CreateNewPost({ spotify }) {
     setIsUploading(false);
     setIsPosting(false);
   }
+
+  const postPreview = () => ({
+    createdAt: null,
+    song,
+    user: {
+      id: spotify.id,
+      name: spotify.name,
+      url: image.url
+    }
+  })
 
   return (
     <>
@@ -103,7 +112,7 @@ function CreateNewPost({ spotify }) {
         </Header>
         <Content>
           {isUploading && <LoadingAnimation />}
-          {image && song && <Post image={image} song={song} />}
+          {image && song && <Post data={postPreview()} />}
           {!(isUploading || image) && (
             <>
               <div>
